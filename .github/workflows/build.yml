@@ -39,7 +39,7 @@ jobs:
           make install
 
       - name: Upload Windows artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rnnoise-windows
           path: install-win
@@ -68,7 +68,7 @@ jobs:
           make install
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rnnoise-linux
           path: install-linux
@@ -96,7 +96,7 @@ jobs:
           make install
 
       - name: Upload macOS artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rnnoise-macos
           path: install-macos
