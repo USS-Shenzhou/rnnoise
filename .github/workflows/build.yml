@@ -88,10 +88,8 @@ jobs:
 
       - name: Build rnnoise (macOS)
         run: |
-          export CFLAGS="-O3 -march=skylake"
-          export CXXFLAGS="$CFLAGS"
           ./autogen.sh
-          ./configure --prefix="$(pwd)/install-macos" --enable-x86-rtcd
+          ./configure --prefix="$(pwd)/install-macos"
           make -j$(sysctl -n hw.logicalcpu)
           make install
 
