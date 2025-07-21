@@ -31,12 +31,15 @@ jobs:
       - name: Build rnnoise (Windows)
         shell: msys2 {0}
         run: |
-          CFLAGS="-O3 -march=haswell"
+          CFLAGS="-Os -march=haswell -flto -ffunction-sections -fdata-sections -DNDEBUG"
           CXXFLAGS="$CFLAGS"
+          export LDFLAGS="-Wl,--gc-sections -Wl,-s"
           ./autogen.sh
           ./configure --host=x86_64-w64-mingw32 --prefix="$(pwd)/install-win" --enable-x86-rtcd
           make -j$(nproc)
           make install
+          strip --strip-unneeded install-win/bin/*.dll
+          strip --strip-unneeded install-win/bin/*.dll.a
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
@@ -62,12 +65,15 @@ jobs:
         env:
           CC: musl-gcc
         run: |
-          export CFLAGS="-O3 -march=skylake"
+          export CFLAGS="-Os -march=skylake -flto -ffunction-sections -fdata-sections -DNDEBUG"
           export CXXFLAGS="$CFLAGS"
+          export LDFLAGS="-Wl,--gc-sections -Wl,-s"
           ./autogen.sh
           ./configure --prefix="$(pwd)/install-linux" --enable-x86-rtcd --host=x86_64-linux-musl
           make -j$(nproc)
           make install
+          strip --strip-unneeded install-linux/lib/*.a
+          strip --strip-unneeded install-linux/lib/*.so
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
@@ -90,10 +96,14 @@ jobs:
 
       - name: Build rnnoise (macOS)
         run: |
+          export CFLAGS="-Os -flto -ffunction-sections -fdata-sections -DNDEBUG"
+          export CXXFLAGS="$CFLAGS"
+          export LDFLAGS="-Wl,-dead_strip"
           ./autogen.sh
           ./configure --prefix="$(pwd)/install-macos"
           make -j$(sysctl -n hw.logicalcpu)
           make install
+          strip -x install-macos/lib/*.dylib
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
