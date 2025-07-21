@@ -56,14 +56,16 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y autoconf automake libtool make gcc
+          sudo apt install -y autoconf automake libtool make gcc musl-tools
 
       - name: Build rnnoise (Linux)
+        env:
+          CC: musl-gcc
         run: |
           export CFLAGS="-O3 -march=skylake"
           export CXXFLAGS="$CFLAGS"
           ./autogen.sh
-          ./configure --prefix="$(pwd)/install-linux" --enable-x86-rtcd
+          ./configure --prefix="$(pwd)/install-linux" --enable-x86-rtcd --host=x86_64-linux-musl
           make -j$(nproc)
           make install
 
